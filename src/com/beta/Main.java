@@ -5,15 +5,14 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = null;
+        PrintWriter pr = null;
         ArrayList<String> teams = new ArrayList<>();
         String inStr;
         String[] strings;
@@ -28,15 +27,22 @@ public class Main {
 
         String userHome = System.getProperty("user.home");
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter file name: ");
-        String fileName = userHome + "\\" + sc.nextLine();
-        if (!fileName.endsWith("csv") && !fileName.endsWith("CSV")){
+        System.out.print("Enter input file name (must be csv file): ");
+        String inputFileName = userHome + "\\" + sc.nextLine();
+        if (!inputFileName.endsWith(".csv") && !inputFileName.endsWith(".CSV")){
             System.out.println("A comma separated values file is required.");
+            return;
+        }
+        System.out.println("Enter output file name (must be txt file): ");
+        String outputFileName = userHome + "\\" + sc.nextLine();
+        if (!outputFileName.endsWith(".txt") && !outputFileName.endsWith(".TXT")){
+            System.out.println("A text file is required.");
             return;
         }
 
         try {
-            br = new BufferedReader(new FileReader(fileName));
+            br = new BufferedReader(new FileReader(inputFileName));
+            pr = new PrintWriter(new BufferedWriter(new FileWriter(outputFileName)));
 
             /*
              * The first line of input is a comma-separated list of all team numbers (as Strings).
@@ -171,6 +177,9 @@ public class Main {
             for (int i=0; i<teams.size(); i++){
                 System.out.printf("\nTeam: %5s   RankPts: %.0f   OPR: %.1f",
                         teamData[i].name, teamData[i].rankPts, teamData[i].opr);
+                int j = teams.indexOf(teamData[i].name);
+                pr.printf("\nTeam: %5s   RankPts: %.0f   OPR: %.1f",
+                        teamData[i].name, teamData[i].rankPts / matrix.getEntry(j,j), teamData[i].opr);
             }
 
 
@@ -178,6 +187,9 @@ public class Main {
             if (br != null) {
                 br.close();
                 }
+            if (pr != null){
+                pr.close();
+            }
         }
 
 
